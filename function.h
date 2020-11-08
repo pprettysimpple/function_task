@@ -27,8 +27,8 @@ struct function<R(Args...)> {
 
     explicit operator bool() const noexcept;
 
-    R operator()(Args&&... args) const;
-    R operator()(Args&&... args);
+    R operator()(Args... args) const;
+    R operator()(Args... args);
 
     template <typename T>
     T* target() noexcept;
@@ -50,12 +50,12 @@ function<R(Args...)>::operator bool() const noexcept {
 }
 
 template <typename R, typename... Args>
-R function<R(Args...)>::operator()(Args&&... args) const {
+R function<R(Args...)>::operator()(Args... args) const {
     return stg.invoke(std::forward<Args>(args)...);
 }
 
 template <typename R, typename... Args>
-R function<R(Args...)>::operator()(Args&&... args) {
+R function<R(Args...)>::operator()(Args... args) {
     return stg.invoke(std::forward<Args>(args)...);
 }
 
