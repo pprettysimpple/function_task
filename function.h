@@ -63,7 +63,7 @@ template <typename R, typename... Args>
 template <typename T>
 T* function<R(Args...)>::target() noexcept {
     if (operator bool() && stg.template check_type<T>()) {
-        return function_traits<T>::template get_target<R, Args...>(&stg);
+        return function_traits<T>::template get_func_obj<R, Args...>(&stg);
     } else {
         return nullptr;
     }
@@ -73,7 +73,7 @@ template <typename R, typename... Args>
 template <typename T>
 T const* function<R(Args...)>::target() const noexcept {
     if (operator bool() && stg.template check_type<T>()) {
-        return function_traits<T>::template get_target<R, Args...>(&stg);
+        return function_traits<T>::template get_func_obj<R, Args...>(&stg);
     } else {
         return nullptr;
     }

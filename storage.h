@@ -35,9 +35,6 @@ struct function_traits;
 
 template <typename R, typename... Args>
 struct storage {
-    template <typename Friend>
-    friend
-    struct function;
 
     storage() noexcept;
 
@@ -123,7 +120,8 @@ storage<R, Args...>::storage(storage&& other) noexcept : storage() {
 template <typename R, typename... Args>
 storage<R, Args...>& storage<R, Args...>::operator=(storage const& other) {
     if (this != &other) {
-        storage(other).swap(*this);
+        desc->destroy(this);
+        desc->copy(&other, this);
     }
     return *this;
 }
@@ -131,7 +129,8 @@ storage<R, Args...>& storage<R, Args...>::operator=(storage const& other) {
 template <typename R, typename... Args>
 storage<R, Args...>& storage<R, Args...>::operator=(storage&& other) noexcept {
     if (this != &other) {
-        storage(std::move(other)).swap(*this);
+        desc->destroy(this);
+        desc->move(&other, this);
     }
     return *this;
 }
@@ -232,12 +231,12 @@ struct function_traits<T, std::enable_if_t<fits_small_storage<T>>> {
     }
 
     template <typename R, typename... Args>
-    static T const* get_target(storage<R, Args...> const* src) {
+    static T const* get_func_obj(storage<R, Args...> const* src) {
         return src->template get_static<T>();
     }
 
     template <typename R, typename... Args>
-    static T* get_target(storage<R, Args...>* src) {
+    static T* get_func_obj(storage<R, Args...>* src) {
         return src->template get_static<T>();
     }
 
@@ -279,12 +278,12 @@ struct function_traits<T, std::enable_if_t<!fits_small_storage<T>>> {
     }
 
     template <typename R, typename... Args>
-    static T const* get_target(storage<R, Args...> const* src) {
+    static T const* get_func_obj(storage<R, Args...> const* src) {
         return src->template get_dynamic<T>();
     }
 
     template <typename R, typename... Args>
-    static T* get_target(storage<R, Args...> *src) {
+    static T* get_func_obj(storage<R, Args...> *src) {
         return src->template get_dynamic<T>();
     }
 
