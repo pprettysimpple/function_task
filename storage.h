@@ -120,8 +120,7 @@ storage<R, Args...>::storage(storage&& other) noexcept : storage() {
 template <typename R, typename... Args>
 storage<R, Args...>& storage<R, Args...>::operator=(storage const& other) {
     if (this != &other) {
-        desc->destroy(this);
-        desc->copy(&other, this);
+        storage(other).swap(*this);
     }
     return *this;
 }
@@ -130,7 +129,7 @@ template <typename R, typename... Args>
 storage<R, Args...>& storage<R, Args...>::operator=(storage&& other) noexcept {
     if (this != &other) {
         desc->destroy(this);
-        desc->move(&other, this);
+        other.desc->move(&other, this);
     }
     return *this;
 }
